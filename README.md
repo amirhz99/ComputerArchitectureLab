@@ -1,1 +1,1 @@
-4 bit full adder with verilog
+This project was created to practice Verillag
