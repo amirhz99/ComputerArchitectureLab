@@ -1,4 +1,3 @@
-
 module FullAdder64 (
     input [63:0] A,
     input [63:0] B,
