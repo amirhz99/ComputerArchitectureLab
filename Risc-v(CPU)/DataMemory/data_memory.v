@@ -1,43 +1,59 @@
-`include "Parameter.v"
+module DataMemory(inputAddress, inputData32bit, outputData32bit, MemRead, MemWrite);
 
-module Data_Memory(
- input clk,
- // address input, shared by read and write port
- input [15:0]   mem_access_addr,
+input [31:0]inputAddress;
+input [31:0]inputData32bit;
+input MemRead, MemWrite;
+output [31:0]outputData32bit;
 
- // write port
- input [15:0]   mem_write_data,
- input     mem_write_en,
- input mem_read,
- // read port
- output [15:0]   mem_read_data
-);
+/////// THE MAIN MEMORY REGISTERS WHICH HOLD EMULATE THE ACTUAL RAM.
+        reg [7:0]MM[255:0];
+///////
 
-reg [`col - 1:0] memory [`row_d - 1:0];
-integer f;
-wire [2:0] ram_addr=mem_access_addr[2:0];
-initial
- begin
-  $readmemb("./test/test.data", memory);
+reg [7:0]address;
+reg [7:0]dataBuff;
+reg [31:0]outputData32bit;
 
-  f = $fopen(`filename);
-  $fmonitor(f, "time = %d\n", $time,
-  "\tmemory[0] = %b\n", memory[0],
-  "\tmemory[1] = %b\n", memory[1],
-  "\tmemory[2] = %b\n", memory[2],
-  "\tmemory[3] = %b\n", memory[3],
-  "\tmemory[4] = %b\n", memory[4],
-  "\tmemory[5] = %b\n", memory[5],
-  "\tmemory[6] = %b\n", memory[6],
-  "\tmemory[7] = %b\n", memory[7]);
-  `simulation_time;
-  $fclose(f);
- end
+integer addressInt, i, j, placeVal,var, baseAddress;
+genvar k;
 
- always @(posedge clk) begin
-  if (mem_write_en)
-   memory[ram_addr] <= mem_write_data;
- end
- assign mem_read_data = (mem_read==1'b1) ? memory[ram_addr]: 16'd0;
+always @( inputData32bit or inputAddress or MemRead or MemWrite)
+begin
+
+  address=inputAddress[7:0];
+
+  addressInt = 0;
+  placeVal = 1;
+  for( i=0 ; i<8 ; i=i+1 )
+  begin
+      if(address[i] == 1'b1)
+        addressInt = addressInt + placeVal;
+      placeVal = placeVal * 2;
+  end
+
+  if(MemRead == 1)
+  begin
+    baseAddress = addressInt;
+    for(i=0 ; i<4 ; i=i+1)
+    begin
+       for(j = 0 ; j < 8 ; j = j+1 )
+        begin
+           outputData32bit[j] = MM[baseAddress + i][j];
+        end
+    end
+  end
+
+  if(MemWrite == 1)
+  begin
+    baseAddress = addressInt;
+    for(i=0 ; i<4 ; i = i + 1)
+    begin
+      for(j = 0 ; j < 8 ; j = j+1 )
+         begin
+             MM[baseAddress + i][j] = inputData32bit[j] ;
+         end
+    end
+
+  end
+end
 
 endmodule

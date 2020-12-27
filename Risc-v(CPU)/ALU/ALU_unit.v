@@ -1,28 +1,114 @@
-module ALU(
- input  [15:0] a,  //src1
- input  [15:0] b,  //src2
- input  [2:0] alu_control, //function sel
+module ALU_Core(ALUSrc1 , ALUSrc2 , ALUCtrl , ALUResult , Zero);
+  input[31:0] ALUSrc1;
+  input[31:0] ALUSrc2;
+  input[2:0] ALUCtrl;
+  output Zero;
+  reg Zero;
+  output [31:0]ALUResult;
+  reg [31:0]ALUResult;
 
- output reg [15:0] result,  //result
- output zero
-    );
+  always @(ALUSrc1 or ALUSrc2 or ALUCtrl)
+    begin
 
-always @(*)
-begin
- case(alu_control)
- 3'b000: result = a + b; // add
- 3'b001: result = a - b; // sub
- 3'b010: result = ~a;
- 3'b011: result = a<<b;
- 3'b100: result = a>>b;
- 3'b101: result = a & b; // and
- 3'b110: result = a | b; // or
- 3'b111: begin if (a<b) result = 16'd1;
-    else result = 16'd0;
+          if(ALUCtrl == 3'b010) //'add'
+          begin
+               ALUResult = ALUSrc1 + ALUSrc2;
+               if(ALUResult == 32'h0000)
+               begin
+                      Zero = 1'b1;
+               end
+               else
+                 begin
+                      Zero = 1'b0;
+                 end
+          end
+
+          if(ALUCtrl == 3'b110) // 'sub'
+          begin
+               ALUResult = ALUSrc1 - ALUSrc2;
+               if(ALUResult == 32'h0000)
+               begin
+                      Zero = 1'b1;
+               end
+               else
+                 begin
+                      Zero = 1'b0;
+                 end
+          end
+
+          if(ALUCtrl == 3'b000) // 'and'
+          begin
+               ALUResult = ALUSrc1 & ALUSrc2;
+               if(ALUResult == 32'h0000)
+               begin
+                      Zero = 1'b1;
+               end
+               else
+                 begin
+                      Zero = 1'b0;
+                 end
+          end
+
+          if(ALUCtrl == 3'b001) // 'or'
+          begin
+               ALUResult = ALUSrc1 | ALUSrc2;
+               if(ALUResult == 32'h0000)
+               begin
+                      Zero = 1'b1;
+               end
+               else
+                 begin
+                      Zero = 1'b0;
+                 end
+          end
+
+          if(ALUCtrl == 3'b111) // 'slt'
+          begin
+               ALUResult = ALUSrc1 - ALUSrc2;
+               if(ALUResult == 32'h0000)
+               begin
+                      Zero = 1'b1;
+               end
+               else
+                 begin
+                      Zero = 1'b0;
+                 end
+          end
     end
- default:result = a + b; // add
- endcase
-end
-assign zero = (result==16'd0) ? 1'b1: 1'b0;
 
 endmodule
+
+
+
+module ALU_Control(FunctField, ALUOp, ALUCtrl);
+input [5:0]FunctField;
+input [1:0]ALUOp;
+output [2:0]ALUCtrl;
+reg [2:0]ALUCtrl;
+
+always@(FunctField or ALUOp)
+begin
+    if(ALUOp == 2'b10)
+    begin
+      case(FunctField)
+        6'b100000: ALUCtrl = 3'b010;    //ADDITION in 'R' Type
+        6'b100010: ALUCtrl = 3'b110;    //SUBTRACTION in 'R' Type
+        6'b100100: ALUCtrl = 3'b000;    //AND in 'R' Type
+        6'b100101: ALUCtrl = 3'b001;    //OR in 'R' Type
+        6'b101010: ALUCtrl = 3'b111;    //SLT in 'R' Type
+    endcase
+    end
+
+    if(ALUOp == 2'b00)     // 'LW/SW' Type Instructions
+    begin
+        ALUCtrl = 3'b010;               //ADDITION irrespective of the FunctField.
+    end
+
+    if(ALUOp == 2'b01)    //   'BEQ', 'BNE' Type Instructions
+    begin
+        ALUCtrl = 3'b110;               //SUBTRACTION irrespective of the FunctField.
+    end
+
+end   //always block
+
+endmodule  //ALUOp module
