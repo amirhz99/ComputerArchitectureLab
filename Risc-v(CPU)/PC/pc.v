@@ -1,4 +1,3 @@
-
 module pc(clk , in , out , reset ,write);
 input clk , reset,write;
 input [63:0] in ;

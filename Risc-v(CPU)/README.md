@@ -1,1 +1,4 @@
-This project was created to practice risc-v cpu
+
+<img src="datapath.png"
+     alt="data path"
+     style="float: left; margin-right: 10px;" />
