@@ -1,3 +1,5 @@
+`include "Nbit_adder.v"
+
 module tb_N_bit_adder;
 
  reg [31:0] input1;
@@ -11,12 +13,15 @@ module tb_N_bit_adder;
   .answer(answer)
  );
 
- initial begin
+    initial begin
+        
+    input1 = 1209;
+    input2 = 4565;
+    #100;
 
-  input1 = 1209;
-  input2 = 4565;
-  #100;
+    $monitor("your answer is %d",answer);
 
- end
+    end
+
 
 endmodule

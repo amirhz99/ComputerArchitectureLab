@@ -1,14 +1,16 @@
-module FullAdder64 (
-    input [63:0] A,
-    input [63:0] B,
-    input Cin,
-    output [63:0] S,
-    output Cout
-    );
+module full_adder(x,y,c_in,s,c_out);
+   input x,y,c_in;
+   output s,c_out;
+ assign s = (x^y) ^ c_in;
+ assign c_out = (y&c_in)| (x&y) | (x&c_in);
+endmodule
 
-    wire C0;
-    wire C1;
-    wire C2;
+module half_adder(x,y,s,c);
+   input x,y;
+   output s,c;
+   assign s=x^y;
+   assign c=x&y;
+endmodule
 
 module N_bit_adder(input1,input2,answer);
 parameter N=32;
@@ -27,20 +29,5 @@ input [N-1:0] input1,input2;
      end
   assign carry_out = carry[N-1];
    endgenerate
-endmodule
-
-module half_adder(x,y,s,c);
-   input x,y;
-   output s,c;
-   assign s=x^y;
-   assign c=x&y;
-endmodule
-
-module full_adder(x,y,c_in,s,c_out);
-   input x,y,c_in;
-   output s,c_out;
- assign s = (x^y) ^ c_in;
- assign c_out = (y&c_in)| (x&y) | (x&c_in);
-endmodule
-
+   
 endmodule

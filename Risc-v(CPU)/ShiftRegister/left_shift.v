@@ -1,13 +1,13 @@
-module LeftShifter_2bit(inData,outData);
+module left_shifter(inData,outData);
 
-  input [31:0]inData;
-  output [31:0]outData;
-  reg [31:0]outData;
+  input [63:0]inData;
+  output [63:0]outData;
+  reg [63:0]outData;
 
   always@(inData)
     begin
 
-      outData=inData<<2;
+      outData=inData<<1;
 
     end
 
