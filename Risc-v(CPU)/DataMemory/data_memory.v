@@ -1,58 +1,28 @@
-module DataMemory(inputAddress, inputData32bit, outputData32bit, MemRead, MemWrite);
+module data_memory (clk,address, write_data, read_data,, mem_Write, mem_Read)
+input wire clk;
+input wire [47:0] address;
+input [63:0] write_data,
+input wire mem_write, mem_read,
+output reg [63:0] read_data
+);
 
-input [31:0]inputAddress;
-input [31:0]inputData32bit;
-input MemRead, MemWrite;
-output [31:0]outputData32bit;
+reg [63:0] MEMO[0:255];  // 256 words of 64-bit memory
 
-/////// THE MAIN MEMORY REGISTERS WHICH HOLD EMULATE THE ACTUAL RAM.
-        reg [7:0]MM[255:0];
-///////
+integer iter;
+initial begin
+  read_data <= 0;
+  for (iter = 0; iter < 256; iter = iter + 1) begin
+    MEMO[iter] = iter;
+  end
+end
 
-reg [7:0]address;
-reg [7:0]dataBuff;
-reg [31:0]outputData32bit;
-
-integer addressInt, i, j, placeVal,var, baseAddress;
-genvar k;
-
-always @( inputData32bit or inputAddress or MemRead or MemWrite)
-begin
-
-  address=inputAddress[7:0];
-
-  addressInt = 0;
-  placeVal = 1;
-  for( i=0 ; i<8 ; i=i+1 )
-  begin
-      if(address[i] == 1'b1)
-        addressInt = addressInt + placeVal;
-      placeVal = placeVal * 2;
+always @(posedge clk) begin
+  if (mem_write == 1'b1) begin
+    MEMO[address] <= write_data;
   end
 
-  if(MemRead == 1)
-  begin
-    baseAddress = addressInt;
-    for(i=0 ; i<4 ; i=i+1)
-    begin
-       for(j = 0 ; j < 8 ; j = j+1 )
-        begin
-           outputData32bit[j] = MM[baseAddress + i][j];
-        end
-    end
-  end
-
-  if(MemWrite == 1)
-  begin
-    baseAddress = addressInt;
-    for(i=0 ; i<4 ; i = i + 1)
-    begin
-      for(j = 0 ; j < 8 ; j = j+1 )
-         begin
-             MM[baseAddress + i][j] = inputData32bit[j] ;
-         end
-    end
-
+  if (mem_read == 1'b1) begin
+    read_data <= MEMO[address];
   end
 end
 
