@@ -1,11 +1,10 @@
-Processor Control Unit Design:
-
+ALU Control Unit Design:
 
 <img src="pic.png"
-     alt="unit picture"
+     alt="ALU control"
      style="float: left; margin-right: 10px;" />
 
 
-<img src="control.png"
-     alt="Control Unit"
+<img src="alu_control.jpg"
+     alt="ALU control"
      style="float: left; margin-right: 10px;" />
