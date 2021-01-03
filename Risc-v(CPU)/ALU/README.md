@@ -1,5 +1,5 @@
 ALU Unit Design:
 
-<img src="alu.jpg"
+<img src="alu.png"
      alt="ALU control"
      style="float: left; margin-right: 10px;" />
