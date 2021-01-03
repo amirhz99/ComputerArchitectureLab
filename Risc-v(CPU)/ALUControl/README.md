@@ -5,6 +5,6 @@ ALU Control Unit Design:
      style="float: left; margin-right: 10px;" />
 
 
-<img src="alu_control.jpg"
+<img src="alu_control.png"
      alt="ALU control"
      style="float: left; margin-right: 10px;" />
