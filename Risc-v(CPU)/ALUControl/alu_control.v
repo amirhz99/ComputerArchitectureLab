@@ -9,7 +9,7 @@ always @(alu_op or funct7_field or funct3_field)
 
 case(alu_op)
     2'b00: alu_control <= 4'b0010; //add ld,sd
-    2'b01: alu_control <= 4'b0110; //sub
+    2'b01: alu_control <= 4'b0110; //subtract
 
     default:
         casex(funct7_field)
@@ -29,15 +29,15 @@ case(alu_op)
                 //or
                 3'b110: alu_control = 4'b0001;
 
-                default: alu_control = 4'b000;
+                default: alu_control = 4'b0000;
 
                 endcase
             end
 
         default:
-        begin
-            alu_control = 4'b0000;
-        end
+            begin
+                alu_control = 4'b0000;
+            end
 
         endcase
 
