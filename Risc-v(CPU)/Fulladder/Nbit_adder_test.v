@@ -14,7 +14,7 @@ module tb_N_bit_adder;
  );
 
     initial begin
-        
+
     input1 = 1209;
     input2 = 4565;
     #100;
